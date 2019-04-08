@@ -1,0 +1,96 @@
+Select Querys
+
+mysql> select  x.first_name,x.last_name,z.city_name,y.street,y.zip_code
+    -> FROM user x
+    -> INNER JOIN address y ON x.id=y.user_id
+    -> INNER JOIN city z ON z.id=y.city_id
+    -> WHERE x.id = 102;
++------------+-----------+-----------+---------------------------------+----------+
+| first_name | last_name | city_name | street                          | zip_code |
++------------+-----------+-----------+---------------------------------+----------+
+| vishal     | mistry    | surat     | ravi shraddha bunglos vadadala  |   392015 |
++------------+-----------+-----------+---------------------------------+----------+
+1 row in set (0.00 sec)
+_____________________________________________________________________________________________________________________________________________________
+
+mysql> select  card.card_number ,card.balance,provider.provider_name ,transection.trans_date,transection.trans_mode,transection.trans_type,transection.amount
+    -> FROM transection
+    -> INNER JOIN card ON card.id = transection.card_id
+    -> INNER JOIN provider ON provider.id=card.provider_id
+    -> WHERE card.user_id = 102;
++-------------+---------+---------------+------------+------------+------------+--------+
+| card_number | balance | provider_name | trans_date | trans_mode | trans_type | amount |
++-------------+---------+---------------+------------+------------+------------+--------+
+|  9824647155 |      25 | vodafone      | 2019-01-01 | Dr         | call       |     25 |
+|  9824647155 |      25 | vodafone      | 2019-11-21 | Cr         | call       |     15 |
+|  9824647155 |      25 | vodafone      | 2019-01-12 | Cr         | Recharge   |     30 |
+|  9824647155 |      25 | vodafone      | 2019-01-12 | Cr         | Recharge   |     20 |
++-------------+---------+---------------+------------+------------+------------+--------+
+4 rows in set (0.00 sec)
+
+_____________________________________________________________________________________________________________________________________________________
+mysql> SELECT trans_mode, sum(amount)
+    -> FROM transection
+    -> where transection.card_id = 502
+    -> GROUP BY year(trans_date),month(trans_date),trans_mode;
++------------+-------------+
+| trans_mode | sum(amount) |
++------------+-------------+
+| Cr         |          50 |
+| Dr         |          25 |
+| Cr         |          15 |
++------------+-------------+
+3 rows in set (0.00 sec)
+_____________________________________________________________________________________________________________________________________________________
+mysql> SELECT trans_mode, sum(amount),`trans_date`
+    -> FROM transection where transection.card_id = (SELECT id from card where user_id = 102 )
+    -> GROUP BY month(trans_date),trans_mode;
+    
++------------+-------------+------------+
+| trans_mode | sum(amount) | trans_date |
++------------+-------------+------------+
+| Cr         |          50 | 2019-01-12 |
+| Dr         |          25 | 2019-01-01 |
+| Cr         |          15 | 2019-11-21 |
++------------+-------------+------------+
+3 rows in set (0.00 sec)
+_____________________________________________________________________________________________________________________________________________________
+mysql> SELECT trans_mode, sum(amount),`trans_date`
+    -> FROM transection where transection.card_id = (SELECT id from card where user_id = 102 )
+    -> GROUP BY month(trans_date),trans_mode
+    -> order by sum(amount) DESC;
++------------+-------------+------------+
+| trans_mode | sum(amount) | trans_date |
++------------+-------------+------------+
+| Cr         |          50 | 2019-01-12 |
+| Dr         |          25 | 2019-01-01 |
+| Cr         |          15 | 2019-11-21 |
++------------+-------------+------------+
+3 rows in set (0.00 sec)
+_____________________________________________________________________________________________________________________________________________________
+
+mysql> SELECT trans_mode, sum(amount),`trans_date`
+    -> FROM transection where transection.card_id = (SELECT id from card where user_id = 102 )
+    -> GROUP BY trans_mode
+    -> order by trans_date;
++------------+-------------+------------+
+| trans_mode | sum(amount) | trans_date |
++------------+-------------+------------+
+| Dr         |          25 | 2019-01-01 |
+| Cr         |          65 | 2019-11-21 |
++------------+-------------+------------+
+2 rows in set (0.00 sec)
+
+_____________________________________________________________________________________________________________________________________________________
+
+mysql> SELECT trans_mode, sum(amount),`trans_date`
+    -> FROM transection where transection.card_id = (SELECT id from card where user_id = 102 )
+    -> GROUP BY trans_mode
+    -> HAVING sum(amount) > 25
+    -> order by trans_mode;
++------------+-------------+------------+
+| trans_mode | sum(amount) | trans_date |
++------------+-------------+------------+
+| Cr         |          65 | 2019-11-21 |
++------------+-------------+------------+
+1 row in set (0.00 sec)
