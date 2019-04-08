@@ -1,0 +1,94 @@
+create table user_tb
+(
+id int(10) auto_increment Primary key,
+first_name varchar(30),
+last_name varchar(30),
+createdate date,
+a_status  varchar(20)
+)
+
+
+create table provider_tb
+(
+id int(10) auto_increment primary key,
+provider_name varchar(30),
+weeklaycharge float
+)
+
+
+create table contry_tb
+(
+id int(10) auto_increment primary key,
+contry_name varchar(20)
+)
+
+
+create table city_tb
+(
+id int(10) auto_increment primary key,
+city_name varchar(30),
+pin_code int(6)
+)
+
+create table state_tb
+(
+	id int(10) auto_increment primary key,
+    state_name varchar(30)
+)
+
+create table address
+(
+id int(10) auto_increment primary key,
+user_id int(10),
+contry_id int(10), 
+state_id int(10),
+city_id int(10),
+street varchar(30),
+home_flat varchar(30),
+foreign key (user_id) references user_tb(id),
+foreign key (contry_id) references contry_tb(id),
+foreign key (state_id) references state_tb(id),
+foreign key (city_id) references city_tb(id)
+)
+
+
+
+create table card_tb
+(
+id int(10) auto_increment primary key,
+card_number int(12),
+balance float,
+user_id int(10),
+provider_id int(10),
+foreign key (user_id) references user_tb(id),
+foreign key (provider_id) references provider_tb(id)
+)
+
+create table callzone_tb
+(
+id int(10) auto_increment primary key,
+zone_name varchar(30),
+rate float,
+provider_id int(10),
+foreign key (provider_id) references provider_tb(id)
+)
+
+create table transection
+(
+id int(10) auto_increment primary key,
+card_id int(10),
+trans_mode varchar(5),
+trans_type varchar(20),
+zone_id int(10),
+amount float,
+trans_date date,
+trans_status varchar(20),
+foreign key (card_id) references card_tb(id),
+foreign key (zone_id) references callzone_tb(id)
+)
+
+
+//add collume after some collume
+
+
+ ALTER TABLE `user` ADD `role` VARCHAR(10) NOT NULL DEFAULT 'user' AFTER `createdate`;
